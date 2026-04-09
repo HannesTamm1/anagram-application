@@ -22,6 +22,7 @@ Frontend/npm-debug.log
 Frontend/yarn-error.log
 Frontend/.vscode/
 Frontend/.idea/
+Frontend/src/vite-env.d.ts
 
 # Shared
 .env
