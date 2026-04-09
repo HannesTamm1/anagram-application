@@ -1,0 +1,32 @@
+# Laravel Backend
+Backend/vendor/
+Backend/node_modules/
+Backend/npm-debug.log
+Backend/yarn-error.log
+Backend/.env.local
+Backend/.env.*.local
+Backend/storage/
+Backend/bootstrap/cache/
+Backend/.vscode/
+Backend/.idea/
+
+# React Frontend
+Frontend/node_modules/
+Frontend/build/
+Frontend/dist/
+Frontend/.env.local
+Frontend/.env.development.local
+Frontend/.env.test.local
+Frontend/.env.production.local
+Frontend/npm-debug.log
+Frontend/yarn-error.log
+Frontend/.vscode/
+Frontend/.idea/
+
+# Shared
+.env
+.env.local
+.DS_Store
+*.log
+.vscode/
+.idea/
