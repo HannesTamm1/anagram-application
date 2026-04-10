@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Word;
+use App\Services\SortedLettersAlgorithm;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,12 +13,12 @@ class WordApiTest extends TestCase
 
     public function test_words_can_be_filtered(): void
     {
-        $normalizer = app(\App\Services\WordNormalizer::class);
+        $algorithm = app(SortedLettersAlgorithm::class);
 
         foreach (['banana', 'apple', 'applet', 'apply'] as $word) {
             Word::query()->create([
                 'word' => $word,
-                'signature' => $normalizer->signature($word),
+                'signature' => $algorithm->key($word),
             ]);
         }
 

@@ -14,21 +14,11 @@ class WordNormalizerTest extends TestCase
         $this->assertSame('stream', $normalizer->normalize(' Stream '));
     }
 
-    public function test_signature_is_the_same_for_anagrams(): void
+    public function test_normalize_keeps_unicode_letters(): void
     {
         $normalizer = new WordNormalizer();
 
-        $this->assertSame(
-            $normalizer->signature('stream'),
-            $normalizer->signature('master')
-        );
-    }
-
-    public function test_signature_ignores_case_and_spaces(): void
-    {
-        $normalizer = new WordNormalizer();
-
-        $this->assertSame('aemrst', $normalizer->signature(' Stream '));
+        $this->assertSame('õun', $normalizer->normalize(' ÕUN '));
     }
 
     public function test_imported_word_allows_unicode_letters(): void

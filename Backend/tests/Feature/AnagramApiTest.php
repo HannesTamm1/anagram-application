@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Word;
+use App\Services\SortedLettersAlgorithm;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,12 +13,12 @@ class AnagramApiTest extends TestCase
 
     public function test_it_finds_anagrams_for_a_word(): void
     {
-        $normalizer = app(\App\Services\WordNormalizer::class);
+        $algorithm = app(SortedLettersAlgorithm::class);
 
         foreach (['stream', 'tamers', 'maters', 'master', 'banana'] as $word) {
             Word::query()->create([
                 'word' => $word,
-                'signature' => $normalizer->signature($word),
+                'signature' => $algorithm->key($word),
             ]);
         }
 

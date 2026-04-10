@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import './App.css'
 import { fetchAnagrams, fetchWords, importWords, type AnagramResponse, type WordRecord } from './lib/api'
+import WordButtonList from './components/WordButtonList'
 
 const DEFAULT_WORD = 'stream'
 const DEFAULT_IMPORT_URL = 'https://www.opus.ee/lemmad2013.txt'
+const QUICK_WORDS = ['aabits', 'mapp', 'karp']
 
 function getMessage(error: unknown, fallback: string): string {
   if (error instanceof Error && error.message) {
@@ -160,7 +162,7 @@ function App() {
         </form>
 
         <div className="simple-links">
-          {['aabits', 'mapp', 'karp'].map((word) => (
+          {QUICK_WORDS.map((word) => (
             <button key={word} type="button" className="small-button" onClick={() => handlePickWord(word)}>
               {word}
             </button>
@@ -175,17 +177,7 @@ function App() {
           {!searchLoading && !searchError && anagrams.length === 0 ? (
             <p className="section-text">No anagrams found.</p>
           ) : null}
-          {anagrams.length > 0 ? (
-            <ul className="simple-list">
-              {anagrams.map((word) => (
-                <li key={word}>
-                  <button type="button" className="small-button" onClick={() => handlePickWord(word)}>
-                    {word}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : null}
+          {anagrams.length > 0 ? <WordButtonList words={anagrams} onPickWord={handlePickWord} /> : null}
         </section>
 
         <section className="section">
@@ -204,15 +196,10 @@ function App() {
           {wordsLoading ? <p className="section-text">Loading words...</p> : null}
           {!wordsLoading && !wordsError && words.length === 0 ? <p className="section-text">No words found.</p> : null}
           {words.length > 0 ? (
-            <ul className="simple-list">
-              {words.map((word) => (
-                <li key={word.id}>
-                  <button type="button" className="small-button" onClick={() => handlePickWord(word.word)}>
-                    {word.word}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <WordButtonList
+              words={words.map((word) => word.word)}
+              onPickWord={handlePickWord}
+            />
           ) : null}
         </section>
       </div>

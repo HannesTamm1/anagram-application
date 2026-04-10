@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Contracts\WordListParser;
+use App\Contracts\WordSimilarityAlgorithm;
 use App\Models\Word;
 use Illuminate\Support\Facades\Http;
 
@@ -10,7 +12,8 @@ class WordImportService
     protected const INSERT_CHUNK_SIZE = 200;
 
     public function __construct(
-        protected WordNormalizer $wordNormalizer
+        protected WordListParser $wordListParser,
+        protected WordSimilarityAlgorithm $wordSimilarityAlgorithm
     ) {}
 
     public function importFromUrl(string $url): int
@@ -21,17 +24,10 @@ class WordImportService
             throw new \RuntimeException("Failed to fetch wordbase. HTTP {$response->status()}");
         }
 
-        $lines = preg_split('/\r\n|\r|\n/', $response->body()) ?: [];
         $timestamp = now();
         $rowsByWord = [];
 
-        foreach ($lines as $line) {
-            $word = $this->wordNormalizer->normalizeImportedWord($line);
-
-            if ($word === null) {
-                continue;
-            }
-
+        foreach ($this->wordListParser->parse($response->body()) as $word) {
             $rowsByWord[$word] = $this->makeRow($word, $timestamp);
         }
 
@@ -48,7 +44,7 @@ class WordImportService
     {
         return [
             'word' => $word,
-            'signature' => $this->wordNormalizer->signature($word),
+            'signature' => $this->wordSimilarityAlgorithm->key($word),
             'created_at' => $timestamp,
             'updated_at' => $timestamp,
         ];

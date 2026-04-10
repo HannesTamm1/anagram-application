@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Word;
+use App\Services\SortedLettersAlgorithm;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -21,7 +22,7 @@ class WordImportApiTest extends TestCase
             'url' => 'https://example.com/words.txt',
         ]);
 
-        $signature = app(\App\Services\WordNormalizer::class)->signature('stream');
+        $signature = app(SortedLettersAlgorithm::class)->key('stream');
 
         $response
             ->assertCreated()
@@ -40,7 +41,7 @@ class WordImportApiTest extends TestCase
     {
         Word::query()->create([
             'word' => 'stream',
-            'signature' => app(\App\Services\WordNormalizer::class)->signature('stream'),
+            'signature' => app(SortedLettersAlgorithm::class)->key('stream'),
         ]);
 
         Http::fake([

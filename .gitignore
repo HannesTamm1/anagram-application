@@ -4,8 +4,11 @@ Backend/node_modules/
 Backend/npm-debug.log
 Backend/yarn-error.log
 Backend/.env.local
+Backend/.env.*
+!Backend/.env.example
 Backend/.env.*.local
 Backend/.phpunit.cache/
+Backend/.phpunit.result.cache
 Backend/storage/
 Backend/bootstrap/cache/
 Backend/.vscode/
@@ -16,9 +19,12 @@ Frontend/node_modules/
 Frontend/build/
 Frontend/dist/
 Frontend/.env.local
+Frontend/.env.*
+!Frontend/.env.example
 Frontend/.env.development.local
 Frontend/.env.test.local
 Frontend/.env.production.local
+Frontend/coverage/
 Frontend/npm-debug.log
 Frontend/yarn-error.log
 Frontend/.vscode/
@@ -28,6 +34,7 @@ Frontend/src/vite-env.d.ts
 # Shared
 .env
 .env.local
+coverage/
 .DS_Store
 *.log
 .vscode/

@@ -19,13 +19,4 @@ class WordNormalizer
 
         return $word;
     }
-
-    public function signature(string $word): string
-    {
-        $chars = preg_split('//u', $this->normalize($word), -1, PREG_SPLIT_NO_EMPTY);
-
-        sort($chars);
-
-        return implode('', $chars);
-    }
 }
