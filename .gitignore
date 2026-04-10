@@ -5,6 +5,7 @@ Backend/npm-debug.log
 Backend/yarn-error.log
 Backend/.env.local
 Backend/.env.*.local
+Backend/.phpunit.cache/
 Backend/storage/
 Backend/bootstrap/cache/
 Backend/.vscode/

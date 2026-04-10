@@ -10,7 +10,7 @@ class WordImportService
     protected const INSERT_CHUNK_SIZE = 200;
 
     public function __construct(
-        protected AnagramService $anagramService
+        protected WordNormalizer $wordNormalizer
     ) {}
 
     public function importFromUrl(string $url): int
@@ -26,18 +26,13 @@ class WordImportService
         $rowsByWord = [];
 
         foreach ($lines as $line) {
-            $word = $this->normalizeWord($line);
+            $word = $this->wordNormalizer->normalizeImportedWord($line);
 
             if ($word === null) {
                 continue;
             }
 
-            $rowsByWord[$word] = [
-                'word' => $word,
-                'signature' => $this->anagramService->signature($word),
-                'created_at' => $timestamp,
-                'updated_at' => $timestamp,
-            ];
+            $rowsByWord[$word] = $this->makeRow($word, $timestamp);
         }
 
         $count = 0;
@@ -49,15 +44,13 @@ class WordImportService
         return $count;
     }
 
-    private function normalizeWord(string $line): ?string
+    private function makeRow(string $word, object $timestamp): array
     {
-        $word = mb_strtolower(trim($line), 'UTF-8');
-
-        // Accept Unicode letters, including Estonian characters.
-        if ($word === '' || ! preg_match('/^\p{L}+$/u', $word)) {
-            return null;
-        }
-
-        return $word;
+        return [
+            'word' => $word,
+            'signature' => $this->wordNormalizer->signature($word),
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp,
+        ];
     }
 }

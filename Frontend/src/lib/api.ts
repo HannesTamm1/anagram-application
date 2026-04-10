@@ -59,13 +59,7 @@ function getErrorMessage(payload: unknown, status: number): string {
   return `Request failed with status ${status}.`
 }
 
-async function requestJson<T>(path: string): Promise<T> {
-  const response = await fetch(`${getApiBaseUrl()}${path}`, {
-    headers: {
-      Accept: 'application/json',
-    },
-  })
-
+async function parseResponse<T>(response: Response): Promise<T> {
   const contentType = response.headers.get('content-type') ?? ''
   const payload = contentType.includes('application/json') ? await response.json() : null
 
@@ -76,24 +70,19 @@ async function requestJson<T>(path: string): Promise<T> {
   return payload as T
 }
 
-async function postJson<T>(path: string, body: Record<string, string>): Promise<T> {
-  const response = await fetch(`${getApiBaseUrl()}${path}`, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  })
-
-  const contentType = response.headers.get('content-type') ?? ''
-  const payload = contentType.includes('application/json') ? await response.json() : null
-
-  if (!response.ok) {
-    throw new Error(getErrorMessage(payload, response.status))
+async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
+  const headers = {
+    Accept: 'application/json',
+    ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
+    ...init?.headers,
   }
 
-  return payload as T
+  const response = await fetch(`${getApiBaseUrl()}${path}`, {
+    ...init,
+    headers,
+  })
+
+  return parseResponse<T>(response)
 }
 
 export function fetchAnagrams(word: string): Promise<AnagramResponse> {
@@ -123,5 +112,8 @@ export async function fetchWords(search = ''): Promise<WordsResponse> {
 }
 
 export function importWords(url: string): Promise<ImportWordsResponse> {
-  return postJson<ImportWordsResponse>('/api/words/import', { url })
+  return requestJson<ImportWordsResponse>('/api/words/import', {
+    method: 'POST',
+    body: JSON.stringify({ url }),
+  })
 }

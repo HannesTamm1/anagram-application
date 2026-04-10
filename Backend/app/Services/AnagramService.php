@@ -7,20 +7,14 @@ use Illuminate\Support\Collection;
 
 class AnagramService
 {
-    public function signature(string $word): string
-    {
-        $letters = mb_strtolower($word);
-        $chars = preg_split('//u', $letters, -1, PREG_SPLIT_NO_EMPTY);
-
-        sort($chars);
-
-        return implode('', $chars);
-    }
+    public function __construct(
+        protected WordNormalizer $wordNormalizer
+    ) {}
 
     public function findAnagrams(string $input): Collection
     {
-        $normalized = mb_strtolower(trim($input));
-        $signature = $this->signature($normalized);
+        $normalized = $this->wordNormalizer->normalize($input);
+        $signature = $this->wordNormalizer->signature($normalized);
 
         return Word::query()
             ->where('signature', $signature)
