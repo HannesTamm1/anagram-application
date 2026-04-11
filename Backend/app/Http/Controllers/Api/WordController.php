@@ -3,25 +3,20 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\WordIndexRequest;
 use App\Models\Word;
-use App\Services\WordNormalizer;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class WordController extends Controller
 {
-    public function __invoke(Request $request, WordNormalizer $wordNormalizer): JsonResponse
+    public function __invoke(WordIndexRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'search' => ['nullable', 'string', 'max:255'],
-            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
-        ]);
+        $validated = $request->validated();
 
         $query = Word::query()->orderBy('word');
 
         if (! empty($validated['search'])) {
-            $search = $wordNormalizer->normalize($validated['search']);
-            $query->where('word', 'like', "%{$search}%");
+            $query->where('word', 'like', "%{$validated['search']}%");
         }
 
         $words = $query

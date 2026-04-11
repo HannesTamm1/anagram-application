@@ -2,6 +2,14 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import './App.css'
 import { fetchAnagrams, fetchWords, importWords, type AnagramResponse, type WordRecord } from './lib/api'
+import {
+  MAX_IMPORT_URL_LENGTH,
+  MAX_WORD_LENGTH,
+  normalizeLettersOnlyInput,
+  validateImportUrlInput,
+  validateOptionalWordInput,
+  validateWordInput,
+} from './lib/inputValidation'
 import WordButtonList from './components/WordButtonList'
 
 const DEFAULT_WORD = 'stream'
@@ -34,10 +42,11 @@ function App() {
   const [importError, setImportError] = useState('')
 
   async function searchWord(word: string) {
-    const trimmedWord = word.trim()
+    const trimmedWord = normalizeLettersOnlyInput(word)
+    const validationError = validateWordInput(trimmedWord, 'Enter a word first.')
 
-    if (!trimmedWord) {
-      setSearchError('Enter a word first.')
+    if (validationError) {
+      setSearchError(validationError)
       setAnagrams([])
       return
     }
@@ -58,11 +67,21 @@ function App() {
   }
 
   async function loadWords(search: string) {
+    const normalizedSearch = normalizeLettersOnlyInput(search)
+    const validationError = validateOptionalWordInput(normalizedSearch)
+
+    if (validationError) {
+      setWordsError(validationError)
+      setWords([])
+      setTotalWords(0)
+      return
+    }
+
     setWordsLoading(true)
     setWordsError('')
 
     try {
-      const response = await fetchWords(search)
+      const response = await fetchWords(normalizedSearch)
       setWords(response.words)
       setTotalWords(response.total)
     } catch (error: unknown) {
@@ -75,9 +94,10 @@ function App() {
 
   async function handleImport() {
     const trimmedUrl = importUrl.trim()
+    const validationError = validateImportUrlInput(trimmedUrl)
 
-    if (!trimmedUrl) {
-      setImportError('Enter a URL first.')
+    if (validationError) {
+      setImportError(validationError)
       setImportMessage('')
       return
     }
@@ -138,6 +158,7 @@ function App() {
               onChange={(event) => setImportUrl(event.target.value)}
               placeholder="Enter a word list URL"
               autoComplete="off"
+              maxLength={MAX_IMPORT_URL_LENGTH}
             />
             <button type="submit" disabled={importLoading}>
               {importLoading ? 'Importing...' : 'Import'}
@@ -155,6 +176,7 @@ function App() {
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Enter a word"
             autoComplete="off"
+            maxLength={MAX_WORD_LENGTH}
           />
           <button type="submit" disabled={searchLoading}>
             {searchLoading ? 'Searching...' : 'Search'}
@@ -190,6 +212,7 @@ function App() {
             onChange={(event) => setWordFilter(event.target.value)}
             placeholder="Filter words"
             autoComplete="off"
+            maxLength={MAX_WORD_LENGTH}
           />
 
           {wordsError ? <p className="error-text">{wordsError}</p> : null}

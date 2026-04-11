@@ -122,3 +122,10 @@ npm test
 
 - Backend tests run from in-memory SQLite so they do not depend on a local PostgreSQL setup, it makes things less complicated.
 - The frontend uses simple mocked API tests to verify user-facing behavior without real network calls.
+
+## Security notes
+
+- Search and filter input is normalized to lowercase, limited in length, and restricted to letters before it reaches the API queries.
+- The word import endpoint only accepts public `http` and `https` URLs. Localhost, private-network targets, URL credentials, and fragments are rejected.
+- Import failures now return generic error messages so backend connection details are not exposed to the client.
+- For deployed environments, keep `APP_DEBUG=false` so unexpected backend exceptions are not shown to end users.

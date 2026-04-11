@@ -146,10 +146,38 @@ describe('App', () => {
     await screen.findByText('2 total')
 
     fireEvent.change(screen.getByPlaceholderText('Enter a word'), {
-      target: { value: 'bad-input' },
+      target: { value: 'plates' },
     })
     fireEvent.click(screen.getByRole('button', { name: 'Search' }))
 
     expect(await screen.findByText('Word lookup failed.')).toBeInTheDocument()
+  })
+
+  it('blocks invalid search input before calling the API', async () => {
+    render(<App />)
+
+    await screen.findByText('2 total')
+
+    fireEvent.change(screen.getByPlaceholderText('Enter a word'), {
+      target: { value: 'bad-input' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }))
+
+    expect(await screen.findByText('Only letters are allowed.')).toBeInTheDocument()
+    expect(mockedFetchAnagrams).toHaveBeenCalledTimes(1)
+  })
+
+  it('blocks unsafe import URLs before calling the API', async () => {
+    render(<App />)
+
+    await screen.findByText('2 total')
+
+    fireEvent.change(screen.getByPlaceholderText('Enter a word list URL'), {
+      target: { value: 'https://user:secret@example.com/words.txt' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Import' }))
+
+    expect(await screen.findByText('URLs with embedded credentials are not allowed.')).toBeInTheDocument()
+    expect(mockedImportWords).not.toHaveBeenCalled()
   })
 })

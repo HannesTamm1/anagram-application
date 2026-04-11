@@ -41,4 +41,13 @@ class AnagramApiTest extends TestCase
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['word']);
     }
+
+    public function test_word_must_only_contain_letters(): void
+    {
+        $response = $this->getJson('/api/anagrams?word=stream123');
+
+        $response
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['word']);
+    }
 }

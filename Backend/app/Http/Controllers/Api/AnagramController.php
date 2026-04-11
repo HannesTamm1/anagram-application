@@ -3,17 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AnagramLookupRequest;
 use App\Services\AnagramService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class AnagramController extends Controller
 {
-    public function __invoke(Request $request, AnagramService $anagramService): JsonResponse
+    public function __invoke(AnagramLookupRequest $request, AnagramService $anagramService): JsonResponse
     {
-        $validated = $request->validate([
-            'word' => ['required', 'string'],
-        ]);
+        $validated = $request->validated();
 
         $anagrams = $anagramService->findAnagrams($validated['word']);
 

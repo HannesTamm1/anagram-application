@@ -41,4 +41,13 @@ class WordApiTest extends TestCase
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['per_page']);
     }
+
+    public function test_search_must_only_contain_letters(): void
+    {
+        $response = $this->getJson('/api/words?search=app%25');
+
+        $response
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['search']);
+    }
 }

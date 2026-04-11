@@ -22,6 +22,8 @@ export type ImportWordsResponse = {
   inserted: number
 }
 
+const SAFE_API_PROTOCOLS = new Set(['http:', 'https:'])
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
@@ -29,11 +31,36 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function getApiBaseUrl(): string {
   const envUrl = import.meta.env.VITE_API_URL?.trim()
   const fallbackUrl = 'http://localhost:8000'
+  const selectedUrl = envUrl && envUrl.length > 0 ? envUrl : fallbackUrl
 
-  return (envUrl && envUrl.length > 0 ? envUrl : fallbackUrl).replace(/\/+$/, '')
+  try {
+    const parsedUrl = new URL(selectedUrl)
+
+    if (
+      !SAFE_API_PROTOCOLS.has(parsedUrl.protocol) ||
+      parsedUrl.username ||
+      parsedUrl.password ||
+      parsedUrl.search ||
+      parsedUrl.hash
+    ) {
+      throw new Error('Unsafe API base URL.')
+    }
+
+    return parsedUrl.toString().replace(/\/+$/, '')
+  } catch {
+    return fallbackUrl
+  }
+}
+
+function buildApiUrl(path: string): string {
+  return new URL(path, `${getApiBaseUrl()}/`).toString()
 }
 
 function getErrorMessage(payload: unknown, status: number): string {
+  if (status >= 500) {
+    return 'The server could not process the request.'
+  }
+
   if (isRecord(payload)) {
     if (typeof payload.message === 'string' && payload.message.length > 0) {
       return payload.message
@@ -77,7 +104,7 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
     ...init?.headers,
   }
 
-  const response = await fetch(`${getApiBaseUrl()}${path}`, {
+  const response = await fetch(buildApiUrl(path), {
     ...init,
     headers,
   })

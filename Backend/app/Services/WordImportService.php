@@ -18,10 +18,14 @@ class WordImportService
 
     public function importFromUrl(string $url): int
     {
-        $response = Http::timeout(30)->get($url);
+        $response = Http::accept('text/plain')
+            ->connectTimeout(5)
+            ->timeout(10)
+            ->withoutRedirecting()
+            ->get($url);
 
         if (! $response->successful()) {
-            throw new \RuntimeException("Failed to fetch wordbase. HTTP {$response->status()}");
+            throw new \RuntimeException('Remote word list request failed.');
         }
 
         $timestamp = now();

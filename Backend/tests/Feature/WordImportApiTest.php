@@ -55,9 +55,20 @@ class WordImportApiTest extends TestCase
         $response
             ->assertStatus(502)
             ->assertExactJson([
-                'message' => 'Failed to fetch wordbase. HTTP 500',
+                'message' => 'Could not import the remote word list.',
             ]);
 
         $this->assertDatabaseCount('words', 1);
+    }
+
+    public function test_import_rejects_private_network_urls(): void
+    {
+        $response = $this->postJson('/api/words/import', [
+            'url' => 'http://127.0.0.1/private.txt',
+        ]);
+
+        $response
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['url']);
     }
 }
