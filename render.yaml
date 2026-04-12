@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: anagram-api
+    runtime: docker
+    rootDir: Backend
+    dockerfilePath: Backend/Dockerfile
+    dockerContext: Backend
+    plan: free
+    region: frankfurt
+    healthCheckPath: /up
+    preDeployCommand: php artisan migrate --force
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_URL
+        fromDatabase:
+          name: anagram-db
+          property: connectionString
+
+databases:
+  - name: anagram-db
+    plan: free
+    region: frankfurt
+    databaseName: anagram_application
+    user: anagram_application
