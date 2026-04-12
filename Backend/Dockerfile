@@ -20,6 +20,9 @@ RUN composer install \
 
 COPY Backend/ ./
 
+RUN mkdir -p bootstrap/cache storage/logs storage/framework/cache storage/framework/sessions storage/framework/views \
+    && chmod -R 777 bootstrap/cache storage
+
 EXPOSE 10000
 
 CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"]
