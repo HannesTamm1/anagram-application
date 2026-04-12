@@ -9,13 +9,16 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-COPY . .
+COPY Backend/composer.json Backend/composer.lock ./
 
 RUN composer install \
     --no-dev \
     --no-interaction \
     --prefer-dist \
-    --optimize-autoloader
+    --optimize-autoloader \
+    --no-scripts
+
+COPY Backend/ ./
 
 EXPOSE 10000
 

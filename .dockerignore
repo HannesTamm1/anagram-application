@@ -1,0 +1,13 @@
+.git
+.env
+.env.*
+Frontend/node_modules
+Frontend/dist
+Backend/vendor
+Backend/tests
+Backend/phpunit.xml
+Backend/storage/logs
+Backend/storage/framework/cache
+Backend/storage/framework/sessions
+Backend/storage/framework/testing
+Backend/storage/framework/views
