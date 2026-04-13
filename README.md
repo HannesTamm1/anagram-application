@@ -10,7 +10,7 @@ HEALTH CHECK: https://anagram-api.onrender.com/up
 
 Get anagram: https://anagram-api.onrender.com/api/anagrams?word=aabits
 
-RESPONSE: {
+Response: {
   "word": "aabits",
   "anagrams": [
     "staabi"
@@ -33,6 +33,7 @@ RESPONSE: {
 cd Backend
 composer install
 ```
+There may be issues with cache, for that fix go to bootstrap directory, mkdir cache there and run the commands as followed before.
 
 2. Create the environment file if needed:
 
