@@ -2,6 +2,22 @@
 
 This project imports a wordbase into a database and finds anagrams for a given word.
 
+## API DEMO on Render
+
+BASE URL: https://anagram-api.onrender.com
+
+HEALTH CHECK: https://anagram-api.onrender.com/up
+
+Get anagram: https://anagram-api.onrender.com/api/anagrams?word=aabits
+
+RESPONSE: {
+  "word": "aabits",
+  "anagrams": [
+    "staabi"
+  ],
+  "count": 1
+}
+
 ## Project structure
 
 - [Backend](Backend) Laravel API and tests
@@ -52,8 +68,7 @@ cd Frontend
 npm install
 ```
 
-2. Optionally set `VITE_API_URL` if the backend is not running on `8000`
-3. Start the frontend:
+2. Start the frontend:
 
 ```bash
 npm run dev
