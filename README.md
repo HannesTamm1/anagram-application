@@ -18,6 +18,16 @@ Response: {
   "count": 1
 }
 
+FROM TERMINAL:
+
+IMPORT WORDS:
+  curl -X POST https://anagram-api.onrender.com/api/words/import \
+    -H "Content-Type: application/json" \
+    -d '{"url":"https://www.opus.ee/lemmad2013.txt"}'
+
+After successful import u can get words by the following command:
+  curl "https://anagram-api.onrender.com/api/anagrams?word=aabits"
+
 ## Project structure
 
 - [Backend](Backend) Laravel API and tests
