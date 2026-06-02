@@ -2,32 +2,6 @@
 
 This project imports a wordbase into a database and finds anagrams for a given word.
 
-## API DEMO on Render
-
-BASE URL: https://anagram-api.onrender.com
-
-HEALTH CHECK: https://anagram-api.onrender.com/up
-
-Get anagram: https://anagram-api.onrender.com/api/anagrams?word=aabits
-
-Response: {
-  "word": "aabits",
-  "anagrams": [
-    "staabi"
-  ],
-  "count": 1
-}
-
-FROM TERMINAL:
-
-IMPORT WORDS:
-  curl -X POST https://anagram-api.onrender.com/api/words/import \
-    -H "Content-Type: application/json" \
-    -d '{"url":"https://www.opus.ee/lemmad2013.txt"}'
-
-After successful import u can get words by the following command:
-  curl "https://anagram-api.onrender.com/api/anagrams?word=aabits"
-
 ## Project structure
 
 - [Backend](Backend) Laravel API and tests
